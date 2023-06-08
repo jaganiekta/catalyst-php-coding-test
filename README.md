@@ -10,5 +10,11 @@
 An example output of the script would look like:<br>
 1, 2, foo, 4, bar, foo, 7, 8, foo, bar, 11, foo, 13, 14, foobar …
 
-Command to execute the **foobar.php**:<br>
-**php foobar.php**
+**Usage:** php foobar.php [options]
+
+**Options:**
+ - --start_number : A number greater than 0 from where script will start to print numbers 
+                   (default value for start_number is 1)
+ * --end_number   : A number greater than 0 at where script will stop to print numbers 
+                   (default value for end_number is 100)
+ + --help         : Show this help message
