@@ -44,7 +44,7 @@ if ($mysqli->connect_errno) {
 
 $createDbSql = "CREATE DATABASE IF NOT EXISTS " . $dbname;
 if ($mysqli->query($createDbSql) === TRUE) {
-   echo "Database created successfully";
+   
 } else {
   echo "Error creating database: " . $mysqli->error;
   exit(1);
@@ -70,16 +70,28 @@ if ($createTable) {
         exit(1);
     }
 
-    exit;
+    if(!$file) {
+        exit;
+    }
 }
 
 // Check if the file option is provided
-// if (empty($file)) {
-//     echo "Error: Please provide the CSV file using the --file option.\n";
-//     echo "Run 'php script.php --help' for more information.\n";
-//     exit(1);
-// }
+if (empty($file)) {
+    echo "Error: Please provide the CSV file using the --file option.\n";
+    echo "Run 'php script.php --help' for more information.\n";
+    exit(1);
+}
 
+if( !file_exists($file) ) {
+    echo "Error: File does not exist.";
+    exit(1);
+}
+
+if( $mysqli->query('select name from users LIMIT 1') === false ) {
+    echo "Error: Please create table using --create_table option.\n";
+    echo "Run 'php script.php --help' for more information.\n";
+    exit(1);
+}
 // Parse CSV file
 $csvData = array_map('str_getcsv', file($file));
 
@@ -122,7 +134,11 @@ if( !empty($csvData) ) {
 
 // Output summary
 echo "Summary:\n";
-echo "Inserted rows: {$insertedRows}\n";
+if ($dryRun) {
+    echo "CSV file parsed successfully and number of rows: {$insertedRows}\n";
+} else {
+    echo "Inserted rows: {$insertedRows}\n";
+}
 echo "Errors: {$errors}\n";
 
 // Close database connection
