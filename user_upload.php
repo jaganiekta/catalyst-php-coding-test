@@ -5,14 +5,14 @@ $options = getopt("u:p:h:d:", ["file:", "create_table", "dry_run", "help"]);
 
 // Help message
 $helpMessage = "
-Insert data from PHP CSV to MySQL Databse
+Insert data from CSV to MySQL Databse
 
 Usage: php user_upload.php [options]
 
 Options:
   --file [csv file name]   Name of the CSV file to be parsed
-  --create_table           Build the MySQL users table and exit
-  --dry_run                Run the script without inserting into the database
+  --create_table           Build the MySQL users table
+  --dry_run                Run the script without inserting CSV file data into the database
   -u                       MySQL username
   -p                       MySQL password
   -h                       MySQL host
