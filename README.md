@@ -63,6 +63,7 @@ This will parse the CSV file and insert data into users table with default MySQL
 - -p: default null so if your mysql not configured with password then skip this -p option
 - -h: default localhost
 - -d: default admin database will create<br>
-If users table is not created before using --create_table option then it will propmt message to create table first
+
+If users table is not created before using --create_table option then script will propmt message to create table first
 
 
