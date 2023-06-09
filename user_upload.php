@@ -58,7 +58,8 @@ if ($createTable) {
             id INT AUTO_INCREMENT PRIMARY KEY,
             name VARCHAR(255) NOT NULL,
             surname VARCHAR(255) NOT NULL,
-            email VARCHAR(255) NOT NULL
+            email VARCHAR(255) NOT NULL,
+            UNIQUE KEY unique_email (email)  
         )
     ";
 
@@ -71,3 +72,58 @@ if ($createTable) {
 
     exit;
 }
+
+// Check if the file option is provided
+// if (empty($file)) {
+//     echo "Error: Please provide the CSV file using the --file option.\n";
+//     echo "Run 'php script.php --help' for more information.\n";
+//     exit(1);
+// }
+
+// Parse CSV file
+$csvData = array_map('str_getcsv', file($file));
+
+// Remove header row
+$header = array_shift($csvData);
+
+// Iterate through CSV rows
+$insertedRows = 0;
+$errors = 0;
+if( !empty($csvData) ) {
+    foreach ($csvData as $row) {
+        $name = mysqli_real_escape_string($mysqli, trim(ucfirst(strtolower($row[0]))));
+        $surname = mysqli_real_escape_string($mysqli, trim(ucfirst(strtolower($row[1]))));
+        $email = mysqli_real_escape_string($mysqli, trim(strtolower($row[2])));
+
+        // Validate email format
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            echo "Error: Invalid email format for '{$email}'. Skipping insertion.\n";
+            $errors++;
+            continue;
+        }
+
+        // Insert into database or dry run
+        if (!$dryRun) {
+            $insertQuery = "INSERT INTO users (name, surname, email) VALUES ('$name', '$surname', '$email')";
+            if ($mysqli->query($insertQuery) === true) {
+                $insertedRows++;
+            } else {
+                echo "Error: Failed to insert row: " . $mysqli->error . "\n";
+                $errors++;
+            }
+        } else {
+            $insertedRows++;
+        }
+    }
+} else {
+    echo "Error: Empty file encountred ";
+    exit(1);
+}
+
+// Output summary
+echo "Summary:\n";
+echo "Inserted rows: {$insertedRows}\n";
+echo "Errors: {$errors}\n";
+
+// Close database connection
+$mysqli->close();
